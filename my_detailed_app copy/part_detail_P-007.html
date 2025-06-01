@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายละเอียด Part Code P-007 - ระบบจัดการ Part Code</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* สไตล์พื้นฐาน */
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #333;
+        }
+
+        /* สไตล์คอนเทนเนอร์หลัก */
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+        }
+
+        /* สไตล์หัวข้อ */
+        h1 {
+            color: #333333;
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        /* สไตล์ย่อหน้า */
+        p {
+            color: #666666;
+            margin-bottom: 15px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* สไตล์สำหรับข้อมูล Part */
+        .part-details {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            text-align: left;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            align-items: flex-start;
+        }
+
+        .part-details h2 {
+            color: #007bff;
+            margin-bottom: 15px;
+            font-size: 24px;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        /* สไตล์สำหรับรูปภาพ */
+        .part-image-container {
+            flex: 1;
+            min-width: 280px;
+            max-width: 40%;
+            box-sizing: border-box;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .part-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        /* สไตล์สำหรับข้อความรายละเอียดทั่วไป */
+        .part-text-content {
+            flex: 2;
+            min-width: 280px;
+            box-sizing: border-box;
+        }
+
+        .part-text-content p strong {
+            color: #333;
+        }
+
+        /* สไตล์สำหรับส่วน "วิธีการทำงาน" และ "จุดเฝ้าระวัง" */
+        .additional-info-section {
+            width: 100%;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: left;
+        }
+
+        .additional-info-section h3 {
+            color: #333333;
+            font-size: 20px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .additional-info-section ul {
+            list-style: disc;
+            padding-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        .additional-info-section ul li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        /* สไตล์ลิงก์กลับ */
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: color 0.3s ease, text-decoration 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        /* สไตล์ข้อความแจ้งเตือน */
+        .message-box {
+            background-color: #ffe0b2;
+            color: #e65100;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .message-box.error {
+            background-color: #ffcdd2;
+            color: #d32f2f;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .part-details {
+                flex-direction: column;
+                align-items: center;
+            }
+            .part-image-container,
+            .part-text-content {
+                max-width: 100%;
+                min-width: unset;
+            }
+            .part-image-container {
+                margin-bottom: 20px;
+            }
+            .container {
+                padding: 30px;
+                margin: 15px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            p {
+                font-size: 15px;
+            }
+            .additional-info-section h3 {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>รายละเอียด Part Code P-007</h1>
+        <p>คุณกำลังดูรายละเอียดสำหรับ: <span id="displayPartCode">P-007</span></p>
+        <p>รหัสพนักงาน: <span id="displayEmployeeId"></span></p>
+
+        <div class="part-details">
+            <div class="part-image-container">
+                <img id="partImage" src="07.jpg" alt="รูปภาพ Part Code P-007" class="part-image" onerror="this.onerror=null;this.src='https://placehold.co/400x300/CCCCCC/666666?text=Image+Not+Found';">
+            </div>
+
+            <div class="part-text-content">
+                <h2>ข้อมูล Part</h2>
+                <p><strong>ชื่อ Part:</strong> <span id="partName">Part Code P-007 (ปั๊มน้ำขนาดเล็ก)</span></p>
+                <p><strong>รายละเอียด:</strong> <span id="partDescription">ปั๊มน้ำไฟฟ้ากระแสตรงขนาดเล็ก เหมาะสำหรับงานถ่ายเทของเหลวปริมาณน้อย เช่น ระบบหล่อเย็นหรือระบบรดน้ำอัตโนมัติ</span></p>
+                <p><strong>ราคา:</strong> <span id="partPrice">920</span> บาท</p>
+            </div>
+
+            <div class="additional-info-section">
+                <h3>วิธีการทำงาน</h3>
+                <p id="howItWorksContent">มอเตอร์ไฟฟ้าขับเคลื่อนใบพัดให้หมุน สร้างแรงเหวี่ยงหนีศูนย์กลางเพื่อดูดและผลักดันของเหลวผ่านปั๊ม</p>
+
+                <h3>จุดเฝ้าระวัง</h3>
+                <ul id="monitoringPointsList">
+                    <li>ตรวจสอบปริมาณการไหลของน้ำว่าลดลงหรือไม่</li>
+                    <li>ฟังเสียงผิดปกติจากปั๊ม เช่น เสียงมอเตอร์ทำงานหนักหรือเสียงน้ำไหลไม่สม่ำเสมอ</li>
+                    <li>ตรวจสอบการรั่วซึมบริเวณท่อทางเข้าและออก</li>
+                    <li>ตรวจสอบแรงดันไฟฟ้าที่จ่ายให้ปั๊มว่าอยู่ในช่วงที่กำหนด</li>
+                </ul>
+            </div>
+        </div>
+
+        <a id="backToSelectionLink" href="part_selection.html" class="back-link">กลับไปหน้าเลือก Part Code</a>
+        <div id="messageBox" class="message-box"></div>
+    </div>
+
+    <script>
+        // อ้างอิงถึงองค์ประกอบ HTML ที่จะใช้งาน
+        const displayEmployeeIdSpan = document.getElementById('displayEmployeeId');
+        const backToSelectionLink = document.getElementById('backToSelectionLink');
+
+        // เมื่อหน้าเว็บโหลดเสร็จ
+        window.onload = () => {
+            // ดึงพารามิเตอร์ employeeId จาก URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const employeeId = urlParams.get('employeeId');
+
+            if (employeeId) {
+                displayEmployeeIdSpan.textContent = employeeId;
+                // ตั้งค่าลิงก์กลับให้ส่ง employeeId กลับไปด้วย
+                backToSelectionLink.href = `part_selection.html?employeeId=${employeeId}`;
+            } else {
+                displayEmployeeIdSpan.textContent = 'ไม่ระบุ';
+                backToSelectionLink.href = `login.html`; // ถ้าไม่มี employeeId ให้กลับไปหน้า login
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ - ระบบจัดการ Part Code</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* สไตล์พื้นฐาน */
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #333;
+        }
+
+        /* สไตล์คอนเทนเนอร์หลัก */
+        .login-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        /* สไตล์หัวข้อ */
+        h1 {
+            color: #333333;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        /* สไตล์กลุ่มฟอร์ม */
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        /* สไตล์ label */
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555555;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        /* สไตล์ input */
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #dddddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            color: #333333;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+
+        /* สไตล์ปุ่ม */
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* สไตล์ข้อความแจ้งเตือน */
+        .message-box {
+            background-color: #ffe0b2;
+            color: #e65100;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .message-box.error {
+            background-color: #ffcdd2;
+            color: #d32f2f;
+        }
+
+        .message-box.success {
+            background-color: #c8e6c9;
+            color: #388e3c;
+        }
+
+        /* สไตล์ Loading Indicator */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            z-index: 10;
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .login-container {
+                padding: 30px;
+                margin: 15px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            button {
+                font-size: 16px;
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="spinner"></div>
+        </div>
+        <h1>เข้าสู่ระบบ</h1>
+        <div class="form-group">
+            <label for="employeeId">รหัสพนักงาน:</label>
+            <input type="text" id="employeeId" name="employeeId" placeholder="กรอกรหัสพนักงานของคุณ" required>
+        </div>
+        <button id="loginButton" type="button">เข้าสู่ระบบ</button>
+        <button id="registerButton" type="button" style="background-color: #28a745;">ลงทะเบียนรหัสพนักงานใหม่</button>
+        <div id="messageBox" class="message-box"></div>
+    </div>
+
+    <script>
+        // *** เปลี่ยน 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE' เป็น URL ที่คุณได้จากการเผยแพร่ Apps Script ***
+        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzVrLZuQMh5azBlZ25OrD6ShAxGGwCCuGAWS0LU7wHu4IzHYNlA1ZQ1CCM5b_yxK24/exec'; // <--- แก้ไขตรงนี้!
+
+        // อ้างอิงถึงองค์ประกอบ HTML ที่จะใช้งาน
+        const employeeIdInput = document.getElementById('employeeId');
+        const loginButton = document.getElementById('loginButton');
+        const registerButton = document.getElementById('registerButton');
+        const messageBox = document.getElementById('messageBox');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // ฟังก์ชันสำหรับแสดงข้อความใน message box
+        function showMessage(msg, type = 'info') {
+            messageBox.textContent = msg;
+            messageBox.className = `message-box ${type}`;
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 5000);
+        }
+
+        // ฟังก์ชันสำหรับแสดง/ซ่อน loading indicator
+        function toggleLoading(show) {
+            loadingOverlay.style.display = show ? 'flex' : 'none';
+            loginButton.disabled = show;
+            registerButton.disabled = show;
+        }
+
+        // ฟังก์ชันสำหรับดึงรหัสพนักงานที่ลงทะเบียนไว้จาก Local Storage
+        function getRegisteredEmployeeIds() {
+            const storedIds = localStorage.getItem('registeredEmployeeIds');
+            return storedIds ? JSON.parse(storedIds) : [];
+        }
+
+        // ฟังก์ชันสำหรับบันทึกรหัสพนักงานที่ลงทะเบียนไว้ลงใน Local Storage
+        function saveRegisteredEmployeeIds(ids) {
+            localStorage.setItem('registeredEmployeeIds', JSON.stringify(ids));
+        }
+
+        // *** ฟังก์ชันใหม่: บันทึกเวลา Login ไปยัง Google Sheet ผ่าน Apps Script ***
+        async function recordLoginTimeInSheet(employeeId) {
+            if (GOOGLE_APPS_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbzVrLZuQMh5azBlZ25OrD6ShAxGGwCCuGAWS0LU7wHu4IzHYNlA1ZQ1CCM5b_yxK24/exec' || !GOOGLE_APPS_SCRIPT_URL) {
+                console.warn("Google Apps Script URL is not configured. Login history will not be sent to Google Sheet.");
+                return; // ไม่ต้องทำอะไรถ้า URL ไม่ได้ถูกตั้งค่า
+            }
+
+            const timestamp = new Date().toISOString(); // เวลาปัจจุบันในรูปแบบ ISO string
+
+            try {
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors', // สำคัญสำหรับ CORS
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ employeeId: employeeId, timestamp: timestamp }),
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    console.log("Login history sent to Google Sheet:", result.message);
+                    // ไม่ต้องแสดงข้อความใน UI เพราะเป็นข้อมูลหลังบ้าน
+                } else {
+                    console.error("Failed to send login history to Google Sheet:", result.message, result.error);
+                    // อาจจะแสดงข้อความ error ใน console หรือ log เท่านั้น
+                }
+            } catch (error) {
+                console.error("Error sending login history to Google Sheet:", error);
+                // อาจจะแสดงข้อความ error ใน console หรือ log เท่านั้น
+            }
+        }
+
+        // ฟังก์ชันสำหรับตรวจสอบการ Login
+        async function handleLogin() {
+            toggleLoading(true);
+            const employeeId = employeeIdInput.value.trim();
+            if (!employeeId) {
+                showMessage("กรุณากรอกรหัสพนักงาน", 'error');
+                toggleLoading(false);
+                return;
+            }
+
+            const registeredIds = getRegisteredEmployeeIds();
+            if (registeredIds.includes(employeeId)) {
+                showMessage("เข้าสู่ระบบสำเร็จ!", 'success');
+                await recordLoginTimeInSheet(employeeId); // *** เรียกใช้ฟังก์ชันบันทึกเวลา Login ไปยัง Sheet ***
+                // เปลี่ยนเส้นทางไปยังหน้า part_selection.html พร้อมส่ง employeeId ไปใน URL
+                window.location.href = `part_selection.html?employeeId=${employeeId}`;
+            } else {
+                showMessage("รหัสพนักงานไม่ถูกต้องหรือไม่พบในระบบ", 'error');
+            }
+            toggleLoading(false);
+        }
+
+        // ฟังก์ชันสำหรับลงทะเบียนรหัสพนักงานใหม่
+        async function handleRegister() {
+            toggleLoading(true);
+            const employeeId = employeeIdInput.value.trim();
+            if (!employeeId) {
+                showMessage("กรุณากรอกรหัสพนักงานที่ต้องการลงทะเบียน", 'error');
+                toggleLoading(false);
+                return;
+            }
+
+            let registeredIds = getRegisteredEmployeeIds();
+            if (registeredIds.includes(employeeId)) {
+                showMessage("รหัสพนักงานนี้มีอยู่ในระบบแล้ว", 'info');
+            } else {
+                registeredIds.push(employeeId);
+                saveRegisteredEmployeeIds(registeredIds);
+                showMessage(`ลงทะเบียนรหัสพนักงาน ${employeeId} สำเร็จ!`, 'success');
+                employeeIdInput.value = ''; // ล้างช่องกรอก
+            }
+            toggleLoading(false);
+        }
+
+        // กำหนด Event Listener ให้กับปุ่ม
+        loginButton.addEventListener('click', handleLogin);
+        registerButton.addEventListener('click', handleRegister);
+
+        // เพิ่มรหัสพนักงานตัวอย่างเมื่อโหลดหน้าครั้งแรก หากยังไม่มี
+        window.onload = () => {
+            let registeredIds = getRegisteredEmployeeIds();
+            if (registeredIds.length === 0) {
+                registeredIds.push('EMP001', 'EMP002', 'EMP003'); // เพิ่มรหัสตัวอย่าง
+                saveRegisteredEmployeeIds(registeredIds);
+                showMessage("เพิ่มรหัสพนักงานตัวอย่าง: EMP001, EMP002, EMP003 แล้ว", 'info');
+            }
+        };
+    </script>
+</body>
+</html>

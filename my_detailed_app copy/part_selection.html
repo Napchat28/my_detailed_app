@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เลือก Part Code - ระบบจัดการ Part Code</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* สไตล์พื้นฐาน */
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #333;
+        }
+
+        /* สไตล์คอนเทนเนอร์หลัก */
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        /* สไตล์หัวข้อ */
+        h1 {
+            color: #333333;
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        /* สไตล์ย่อหน้า */
+        p {
+            color: #666666;
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        /* สไตล์กลุ่มฟอร์ม */
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        /* สไตล์ label */
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555555;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        /* สไตล์ dropdown (select) */
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #dddddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            color: #333333;
+            background-color: #fdfdfd;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+
+        /* สไตล์ปุ่ม */
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* สไตล์ลิงก์กลับ */
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: color 0.3s ease, text-decoration 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        /* สไตล์ข้อความแจ้งเตือน */
+        .message-box {
+            background-color: #ffe0b2;
+            color: #e65100;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .message-box.error {
+            background-color: #ffcdd2;
+            color: #d32f2f;
+        }
+
+        .message-box.success {
+            background-color: #c8e6c9;
+            color: #388e3c;
+        }
+
+        /* สไตล์ Loading Indicator */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            z-index: 10;
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* สไตล์สำหรับประวัติการ Login */
+        .login-history-section {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: left;
+        }
+
+        .login-history-section h2 {
+            color: #333333;
+            font-size: 22px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .login-history-list {
+            list-style: none; /* ไม่มีสัญลักษณ์หัวข้อ */
+            padding: 0;
+            max-height: 150px; /* จำกัดความสูง */
+            overflow-y: auto; /* เพิ่ม scrollbar ถ้าเนื้อหาเกิน */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .login-history-list li {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 15px;
+            color: #555;
+        }
+
+        .login-history-list li:last-child {
+            border-bottom: none; /* ไม่มีเส้นขอบที่รายการสุดท้าย */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px;
+                margin: 15px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            p {
+                font-size: 15px;
+            }
+            button {
+                font-size: 16px;
+                padding: 12px 20px;
+            }
+            .login-history-section h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="spinner"></div>
+        </div>
+        <h1>เลือก Part Code</h1>
+        <p>ยินดีต้อนรับ, <span id="displayEmployeeId"></span></p>
+
+        <div class="form-group">
+            <label for="partCode">เลือก Part Code:</label>
+            <select id="partCode" name="partCode" onchange="navigateToPartDetail()">
+                <option value="">-- กรุณาเลือก --</option>
+                </select>
+        </div>
+
+        <button id="saveSelectionButton" type="button">บันทึกการเลือก</button>
+
+        <a href="login.html" class="back-link">กลับสู่หน้า Login</a>
+        <div id="messageBox" class="message-box"></div>
+
+        <div class="login-history-section">
+            <h2>ประวัติการเข้าสู่ระบบของคุณ</h2>
+            <ul id="loginHistoryList" class="login-history-list">
+                <li>ไม่มีประวัติการเข้าสู่ระบบ</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // อ้างอิงถึงองค์ประกอบ HTML ที่จะใช้งาน
+        const displayEmployeeIdSpan = document.getElementById('displayEmployeeId');
+        const partCodeSelect = document.getElementById('partCode');
+        const saveSelectionButton = document.getElementById('saveSelectionButton');
+        const messageBox = document.getElementById('messageBox');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loginHistoryList = document.getElementById('loginHistoryList');
+
+        let currentEmployeeId = ''; // เก็บ employeeId ที่ส่งมาจากหน้า Login
+
+        // ฟังก์ชันสำหรับแสดงข้อความใน message box
+        function showMessage(msg, type = 'info') {
+            messageBox.textContent = msg;
+            messageBox.className = `message-box ${type}`;
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 5000);
+        }
+
+        // ฟังก์ชันสำหรับแสดง/ซ่อน loading indicator
+        function toggleLoading(show) {
+            loadingOverlay.style.display = show ? 'flex' : 'none';
+            saveSelectionButton.disabled = show;
+        }
+
+        // ข้อมูล Part Code จำลอง (In-memory data)
+        // เรายังคงเก็บข้อมูลนี้ไว้ที่นี่เพื่อใช้เติม dropdown
+        // แต่หน้า part_detail.html จะไม่ใช้ข้อมูลนี้แล้ว
+        const dummyPartCodes = [
+            { id: 'P-001', name: 'Part Code P-001 (มอเตอร์กระแสสลับ)' },
+            { id: 'P-002', name: 'Part Code P-002 (เซ็นเซอร์อุณหภูมิ NTC)' },
+            { id: 'P-003', name: 'Part Code P-003 (วาล์วควบคุมแรงดัน)' },
+            { id: 'P-004', name: 'Part Code P-004 (สายเคเบิลใยแก้วนำแสง)' },
+            { id: 'P-005', name: 'Part Code P-005 (ชุดขับมอเตอร์ DC)' },
+            { id: 'P-006', name: 'Part Code P-006 (สวิตช์แรงดัน)' },
+            { id: 'P-007', name: 'Part Code P-007 (ปั๊มน้ำขนาดเล็ก)' },
+            { id: 'P-008', name: 'Part Code P-008 (แผงวงจรควบคุม PLC)' },
+            { id: 'P-009', name: 'Part Code P-009 (แบตเตอรี่ลิเธียมไอออน)' },
+            { id: 'P-010', name: 'Part Code P-010 (ชุดซ่อมบำรุงปั๊มลม)' },
+        ];
+
+        // ฟังก์ชันสำหรับโหลด Part Code จากข้อมูลจำลองและเติมลงใน Dropdown
+        function loadPartCodes() {
+            toggleLoading(true);
+            partCodeSelect.innerHTML = '<option value="">-- กรุณาเลือก --</option>'; // ล้างตัวเลือกเดิม
+
+            dummyPartCodes.forEach((part) => {
+                const option = document.createElement('option');
+                option.value = part.id;
+                option.textContent = part.name;
+                partCodeSelect.appendChild(option);
+            });
+            showMessage("โหลด Part Code สำเร็จ", 'success');
+            toggleLoading(false);
+        }
+
+        // ฟังก์ชันสำหรับดึงข้อมูลการเลือก Part Code จาก Local Storage
+        function getEmployeeSelections() {
+            const storedSelections = localStorage.getItem('employeeSelections');
+            return storedSelections ? JSON.parse(storedSelections) : {};
+        }
+
+        // ฟังก์ชันสำหรับบันทึกข้อมูลการเลือก Part Code ลงใน Local Storage
+        function saveEmployeeSelections(selections) {
+            localStorage.setItem('employeeSelections', JSON.stringify(selections));
+        }
+
+        // ฟังก์ชันสำหรับบันทึกการเลือก Part Code
+        async function saveSelection() {
+            toggleLoading(true);
+            const selectedPartCode = partCodeSelect.value;
+            if (!selectedPartCode) {
+                showMessage("กรุณาเลือก Part Code", 'error');
+                toggleLoading(false);
+                return;
+            }
+
+            if (!currentEmployeeId) {
+                showMessage("ไม่พบรหัสพนักงาน โปรดกลับไปเข้าสู่ระบบใหม่", 'error');
+                toggleLoading(false);
+                return;
+            }
+
+            let selections = getEmployeeSelections();
+            selections[currentEmployeeId] = {
+                selectedPartCode: selectedPartCode,
+                timestamp: new Date().toISOString()
+            };
+            saveEmployeeSelections(selections);
+
+            showMessage(`บันทึกการเลือก Part Code: ${selectedPartCode} สำเร็จ!`, 'success');
+            toggleLoading(false);
+        }
+
+        // *** ฟังก์ชันใหม่: นำทางไปยังไฟล์ Part Detail เฉพาะ ***
+        function navigateToPartDetail() {
+            const selectedPartCode = partCodeSelect.value;
+            if (selectedPartCode) {
+                // สร้างชื่อไฟล์ HTML ของ Part Detail
+                const detailFileName = `part_detail_${selectedPartCode}.html`;
+                // เปลี่ยนเส้นทางไปยังไฟล์นั้น พร้อมส่ง employeeId ไปใน URL
+                window.location.href = `${detailFileName}?employeeId=${currentEmployeeId}`;
+            }
+        }
+
+        // กำหนด Event Listener ให้กับปุ่ม
+        saveSelectionButton.addEventListener('click', saveSelection);
+
+        // เมื่อหน้าเว็บโหลดเสร็จ
+        window.onload = () => {
+            // ดึง employeeId จาก URL
+            const urlParams = new URLSearchParams(window.location.search);
+            currentEmployeeId = urlParams.get('employeeId');
+
+            if (currentEmployeeId) {
+                displayEmployeeIdSpan.textContent = `รหัสพนักงาน ${currentEmployeeId}`;
+                displayLoginHistory(currentEmployeeId); // เรียกใช้ฟังก์ชันแสดงประวัติ Login
+            } else {
+                displayEmployeeIdSpan.textContent = 'โปรดเข้าสู่ระบบ';
+                // ถ้าไม่มีรหัสพนักงาน ให้กลับไปหน้า Login หลังจาก 3 วินาที
+                setTimeout(() => { window.location.href = 'login.html'; }, 3000);
+            }
+
+            loadPartCodes(); // โหลด Part Code
+        };
+
+        // ฟังก์ชันสำหรับดึงและแสดงประวัติการ Login (คัดลอกมาจาก login.html)
+        function displayLoginHistory(employeeId) {
+            const storedLoginHistory = localStorage.getItem('loginHistory');
+            const loginHistory = storedLoginHistory ? JSON.parse(storedLoginHistory) : {};
+            const employeeLoginTimes = loginHistory[employeeId] || [];
+
+            loginHistoryList.innerHTML = ''; // ล้างรายการเดิม
+
+            if (employeeLoginTimes.length > 0) {
+                // เรียงลำดับเวลาจากใหม่สุดไปเก่าสุด
+                employeeLoginTimes.sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+
+                employeeLoginTimes.forEach(timestamp => {
+                    const listItem = document.createElement('li');
+                    // แปลง ISO string เป็นรูปแบบที่อ่านง่าย
+                    const date = new Date(timestamp);
+                    const options = {
+                        year: 'numeric', month: 'long', day: 'numeric',
+                        hour: '2-digit', minute: '2-digit', second: '2-digit',
+                        hour12: false // ใช้รูปแบบ 24 ชั่วโมง
+                    };
+                    listItem.textContent = `เข้าสู่ระบบเมื่อ: ${date.toLocaleDateString('th-TH', options)}`;
+                    loginHistoryList.appendChild(listItem);
+                });
+            } else {
+                const listItem = document.createElement('li');
+                listItem.textContent = 'ไม่มีประวัติการเข้าสู่ระบบสำหรับรหัสพนักงานนี้';
+                loginHistoryList.appendChild(listItem);
+            }
+        }
+    </script>
+</body>
+</html>

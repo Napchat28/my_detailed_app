@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายละเอียด Part Code - ระบบจัดการ Part Code</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* สไตล์พื้นฐาน */
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #333;
+        }
+
+        /* สไตล์คอนเทนเนอร์หลัก */
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 800px; /* เพิ่มความกว้างสูงสุดอีก เพื่อรองรับข้อมูลที่มากขึ้น */
+            position: relative;
+        }
+
+        /* สไตล์หัวข้อ */
+        h1 {
+            color: #333333;
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        /* สไตล์ย่อหน้า */
+        p {
+            color: #666666;
+            margin-bottom: 15px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* สไตล์สำหรับข้อมูล Part */
+        .part-details {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            text-align: left;
+            display: flex; /* ใช้ Flexbox สำหรับจัดวางรูปภาพและข้อความ */
+            flex-wrap: wrap; /* ให้ขึ้นบรรทัดใหม่เมื่อหน้าจอเล็ก */
+            gap: 25px; /* ระยะห่างระหว่างองค์ประกอบ */
+            align-items: flex-start; /* จัดแนวตั้งให้ชิดด้านบน */
+        }
+
+        .part-details h2 {
+            color: #007bff;
+            margin-bottom: 15px;
+            font-size: 24px;
+            font-weight: 600;
+            width: 100%; /* ให้หัวข้ออยู่เต็มความกว้าง */
+        }
+
+        /* สไตล์สำหรับรูปภาพ */
+        .part-image-container {
+            flex: 1; /* ให้ยืดหยุ่นตามพื้นที่ */
+            min-width: 280px; /* ความกว้างขั้นต่ำของรูปภาพ */
+            max-width: 40%; /* ความกว้างสูงสุดของรูปภาพ */
+            box-sizing: border-box;
+            border-radius: 8px;
+            overflow: hidden; /* ซ่อนส่วนเกินของรูปภาพ */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .part-image {
+            width: 100%; /* รูปภาพเต็มความกว้างของ container */
+            height: auto; /* รักษาอัตราส่วน */
+            display: block; /* ลบช่องว่างด้านล่างรูปภาพ */
+            border-radius: 8px;
+        }
+
+        /* สไตล์สำหรับข้อความรายละเอียดทั่วไป */
+        .part-text-content {
+            flex: 2; /* ให้ยืดหยุ่นตามพื้นที่ */
+            min-width: 280px; /* ความกว้างขั้นต่ำของข้อความ */
+            box-sizing: border-box;
+        }
+
+        .part-text-content p strong {
+            color: #333;
+        }
+
+        /* สไตล์สำหรับส่วน "วิธีการทำงาน" และ "จุดเฝ้าระวัง" */
+        .additional-info-section {
+            width: 100%; /* ให้ส่วนนี้อยู่เต็มความกว้าง */
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: left;
+        }
+
+        .additional-info-section h3 {
+            color: #333333;
+            font-size: 20px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .additional-info-section ul {
+            list-style: disc; /* ใช้สัญลักษณ์จุด */
+            padding-left: 25px; /* เยื้องเข้ามา */
+            margin-bottom: 15px;
+        }
+
+        .additional-info-section ul li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        /* สไตล์ลิงก์กลับ */
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: color 0.3s ease, text-decoration 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        /* สไตล์ข้อความแจ้งเตือน */
+        .message-box {
+            background-color: #ffe0b2;
+            color: #e65100;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .message-box.error {
+            background-color: #ffcdd2;
+            color: #d32f2f;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .part-details {
+                flex-direction: column; /* บนมือถือให้เรียงจากบนลงล่าง */
+                align-items: center; /* จัดให้อยู่กึ่งกลาง */
+            }
+            .part-image-container,
+            .part-text-content {
+                max-width: 100%; /* เต็มความกว้าง */
+                min-width: unset; /* ยกเลิก min-width */
+            }
+            .part-image-container {
+                margin-bottom: 20px; /* เพิ่มระยะห่างด้านล่างรูปภาพ */
+            }
+            .container {
+                padding: 30px;
+                margin: 15px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            p {
+                font-size: 15px;
+            }
+            .additional-info-section h3 {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>รายละเอียด Part Code</h1>
+        <p>คุณกำลังดูรายละเอียดสำหรับ: <span id="displayPartCode"></span></p>
+        <p>รหัสพนักงาน: <span id="displayEmployeeId"></span></p>
+
+        <div class="part-details">
+            <div class="part-image-container">
+                <img id="partImage" src="" alt="รูปภาพ Part Code" class="part-image" onerror="this.onerror=null;this.src='https://placehold.co/400x300/CCCCCC/666666?text=Image+Not+Found';">
+            </div>
+
+            <div class="part-text-content">
+                <h2>ข้อมูล Part</h2>
+                <p><strong>ชื่อ Part:</strong> <span id="partName"></span></p>
+                <p><strong>รายละเอียด:</strong> <span id="partDescription"></span></p>
+                <p><strong>ราคา:</strong> <span id="partPrice"></span> บาท</p>
+            </div>
+
+            <div class="additional-info-section">
+                <h3>วิธีการทำงาน</h3>
+                <p id="howItWorksContent"></p>
+
+                <h3>จุดเฝ้าระวัง</h3>
+                <ul id="monitoringPointsList">
+                    </ul>
+            </div>
+            </div>
+
+        <a id="backToSelectionLink" href="part_selection.html" class="back-link">กลับไปหน้าเลือก Part Code</a>
+        <div id="messageBox" class="message-box"></div>
+    </div>
+
+    <script>
+        // อ้างอิงถึงองค์ประกอบ HTML ที่จะใช้งาน
+        const displayPartCodeSpan = document.getElementById('displayPartCode');
+        const displayEmployeeIdSpan = document.getElementById('displayEmployeeId');
+        const partImage = document.getElementById('partImage');
+        const partNameSpan = document.getElementById('partName');
+        const partDescriptionSpan = document.getElementById('partDescription');
+        const partPriceSpan = document.getElementById('partPrice');
+        const howItWorksContent = document.getElementById('howItWorksContent'); // อ้างอิงถึงส่วนวิธีการทำงาน
+        const monitoringPointsList = document.getElementById('monitoringPointsList'); // อ้างอิงถึงรายการจุดเฝ้าระวัง
+        const backToSelectionLink = document.getElementById('backToSelectionLink');
+        const messageBox = document.getElementById('messageBox');
+
+        // ข้อมูล Part Code จำลอง (ต้องเหมือนกับใน part_selection.html)
+        const dummyPartCodes = [
+            {
+                id: 'P-001',
+                name: 'Part Code P-001 (มอเตอร์กระแสสลับ)',
+                description: 'มอเตอร์ไฟฟ้ากระแสสลับขนาดเล็กสำหรับเครื่องจักรทั่วไป ให้กำลังขับเคลื่อนที่เสถียรและประหยัดพลังงาน',
+                price: '1,250',
+                imageUrl: 'https://placehold.co/400x300/FF5733/FFFFFF?text=Part+001',
+                howItWorks: 'มอเตอร์ทำงานโดยใช้หลักการเหนี่ยวนำแม่เหล็กไฟฟ้า เมื่อกระแสไฟฟ้าไหลผ่านขดลวด จะสร้างสนามแม่เหล็กที่ผลักดันให้โรเตอร์หมุน',
+                monitoringPoints: [
+                    'ตรวจสอบอุณหภูมิของมอเตอร์ระหว่างการทำงาน',
+                    'ฟังเสียงผิดปกติ เช่น เสียงเสียดสีหรือเสียงดังผิดปกติ',
+                    'ตรวจสอบการสั่นสะเทือนที่มากเกินไป',
+                    'ตรวจสอบการใช้กระแสไฟฟ้าว่าอยู่ในช่วงปกติหรือไม่'
+                ]
+            },
+            {
+                id: 'P-002',
+                name: 'Part Code P-002 (เซ็นเซอร์อุณหภูมิ NTC)',
+                description: 'เซ็นเซอร์วัดอุณหภูมิแบบเทอร์มิสเตอร์ NTC ความแม่นยำสูง เหมาะสำหรับงานควบคุมอุณหภูมิที่ต้องการความละเอียด',
+                price: '890',
+                imageUrl: 'https://placehold.co/400x300/33FF57/FFFFFF?text=Part+002',
+                howItWorks: 'เซ็นเซอร์ NTC (Negative Temperature Coefficient) มีความต้านทานที่ลดลงเมื่ออุณหภูมิเพิ่มขึ้น วงจรจะวัดค่าความต้านทานนี้และแปลงเป็นค่าอุณหภูมิ',
+                monitoringPoints: [
+                    'ตรวจสอบค่าอุณหภูมิที่อ่านได้ว่ามีความเสถียรและสมเหตุสมผล',
+                    'ตรวจสอบการเชื่อมต่อสายไฟไม่ให้หลวมหรือมีการกัดกร่อน',
+                    'หลีกเลี่ยงการติดตั้งในบริเวณที่มีการเปลี่ยนแปลงอุณหภูมิอย่างรวดเร็ว'
+                ]
+            },
+            {
+                id: 'P-003',
+                name: 'Part Code P-003 (วาล์วควบคุมแรงดัน)',
+                description: 'วาล์วควบคุมแรงดันไฮดรอลิกส์แบบปรับได้ ใช้สำหรับควบคุมแรงดันในระบบให้คงที่ตามที่กำหนด',
+                price: '3,500',
+                imageUrl: 'https://placehold.co/400x300/3357FF/FFFFFF?text=Part+003',
+                howItWorks: 'วาล์วทำงานโดยใช้สปริงและลูกสูบเพื่อรักษาสมดุลของแรงดัน เมื่อแรงดันเกินค่าที่ตั้งไว้ ลูกสูบจะเคลื่อนที่เพื่อระบายแรงดันส่วนเกินออก',
+                monitoringPoints: [
+                    'ตรวจสอบค่าแรงดันขาออกว่าคงที่ตามที่ตั้งไว้หรือไม่',
+                    'ตรวจสอบการรั่วซึมของน้ำมันไฮดรอลิกส์บริเวณวาล์ว',
+                    'ฟังเสียงผิดปกติขณะวาล์วทำงาน เช่น เสียงหอนหรือเสียงสั่น',
+                    'ตรวจสอบการตอบสนองของวาล์วเมื่อมีการเปลี่ยนแปลงแรงดัน'
+                ]
+            },
+            {
+                id: 'P-004',
+                name: 'Part Code P-004 (สายเคเบิลใยแก้วนำแสง)',
+                description: 'สายเคเบิลใยแก้วนำแสงแบบ Multi-mode ความยาว 10 เมตร สำหรับการส่งข้อมูลความเร็วสูงในระยะใกล้',
+                price: '2,100',
+                imageUrl: 'https://placehold.co/400x300/FF33CC/FFFFFF?text=Part+004',
+                howItWorks: 'ส่งข้อมูลในรูปของแสงผ่านเส้นใยแก้วขนาดเล็ก แสงจะสะท้อนภายในเส้นใยไปจนถึงปลายทาง โดยมีการสูญเสียน้อยมากเมื่อเทียบกับสายทองแดง',
+                monitoringPoints: [
+                    'ตรวจสอบความเสียหายทางกายภาพของสายเคเบิล เช่น รอยหักงอหรือรอยฉีกขาด',
+                    'ตรวจสอบค่า Loss ของสัญญาณแสงที่ปลายทาง',
+                    'หลีกเลี่ยงการดึงหรือบิดสายเคเบิลอย่างรุนแรง',
+                    'ทำความสะอาดหัว Connector เป็นประจำ'
+                ]
+            },
+            {
+                id: 'P-005',
+                name: 'Part Code P-005 (ชุดขับมอเตอร์ DC)',
+                description: 'ชุดขับมอเตอร์กระแสตรงขนาดเล็ก สำหรับควบคุมความเร็วและทิศทางการหมุนของมอเตอร์ DC',
+                price: '750',
+                imageUrl: 'https://placehold.co/400x300/FFFF33/000000?text=Part+005',
+                howItWorks: 'รับสัญญาณควบคุมจากไมโครคอนโทรลเลอร์ (เช่น PWM) เพื่อจ่ายกระแสไฟฟ้าไปยังมอเตอร์ในปริมาณที่เหมาะสม ทำให้สามารถควบคุมความเร็วและทิศทางได้',
+                monitoringPoints: [
+                    'ตรวจสอบอุณหภูมิของ Driver IC ระหว่างการทำงาน',
+                    'ตรวจสอบการเชื่อมต่อสายไฟจากแหล่งจ่ายไฟและมอเตอร์',
+                    'สังเกตพฤติกรรมการหมุนของมอเตอร์ว่าผิดปกติหรือไม่',
+                    'ตรวจสอบสัญญาณควบคุมที่ป้อนเข้า Driver'
+                ]
+            },
+            {
+                id: 'P-006',
+                name: 'Part Code P-006 (สวิตช์แรงดัน)',
+                description: 'สวิตช์แรงดันแบบปรับค่าได้ ใช้สำหรับตรวจจับแรงดันในระบบและส่งสัญญาณเมื่อแรงดันถึงค่าที่ตั้งไว้',
+                price: '1,500',
+                imageUrl: 'https://placehold.co/400x300/33FFFF/000000?text=Part+006',
+                howItWorks: 'ภายในมีไดอะแฟรมที่ตอบสนองต่อแรงดัน เมื่อแรงดันถึงจุดที่ตั้งไว้ ไดอะแฟรมจะเคลื่อนที่ไปกดสวิตช์เพื่อเปลี่ยนสถานะวงจรไฟฟ้า',
+                monitoringPoints: [
+                    'ตรวจสอบการทำงานของสวิตช์ว่าตัดต่อวงจรที่แรงดันถูกต้องหรือไม่',
+                    'ตรวจสอบการรั่วซึมบริเวณจุดเชื่อมต่อแรงดัน',
+                    'ทำความสะอาดบริเวณเซ็นเซอร์แรงดันเป็นประจำ',
+                    'หลีกเลี่ยงการตั้งค่าแรงดันที่ใกล้เคียงกับขีดจำกัดของสวิตช์'
+                ]
+            },
+            {
+                id: 'P-007',
+                name: 'Part Code P-007 (ปั๊มน้ำขนาดเล็ก)',
+                description: 'ปั๊มน้ำไฟฟ้ากระแสตรงขนาดเล็ก เหมาะสำหรับงานถ่ายเทของเหลวปริมาณน้อย เช่น ระบบหล่อเย็นหรือระบบรดน้ำอัตโนมัติ',
+                price: '920',
+                imageUrl: 'https://placehold.co/400x300/FF9933/FFFFFF?text=Part+007' ,
+                howItWorks: 'มอเตอร์ไฟฟ้าขับเคลื่อนใบพัดให้หมุน สร้างแรงเหวี่ยงหนีศูนย์กลางเพื่อดูดและผลักดันของเหลวผ่านปั๊ม',
+                monitoringPoints: [
+                    'ตรวจสอบปริมาณการไหลของน้ำว่าลดลงหรือไม่',
+                    'ฟังเสียงผิดปกติจากปั๊ม เช่น เสียงมอเตอร์ทำงานหนักหรือเสียงน้ำไหลไม่สม่ำเสมอ',
+                    'ตรวจสอบการรั่วซึมบริเวณท่อทางเข้าและออก',
+                    'ตรวจสอบแรงดันไฟฟ้าที่จ่ายให้ปั๊มว่าอยู่ในช่วงที่กำหนด'
+                ]
+            },
+            {
+                id: 'P-008',
+                name: 'Part Code P-008 (แผงวงจรควบคุม PLC)',
+                description: 'แผงวงจรควบคุม PLC ขนาดกะทัดรัด สำหรับงานควบคุมระบบอัตโนมัติในอุตสาหกรรมขนาดเล็กถึงกลาง',
+                price: '4,800',
+                imageUrl: 'https://placehold.co/400x300/9933FF/FFFFFF?text=Part+008',
+                howItWorks: 'ทำงานตามโปรแกรมที่ผู้ใช้เขียนไว้ (Ladder Logic, Function Block Diagram) โดยรับสัญญาณ Input จากเซ็นเซอร์ และส่งสัญญาณ Output ไปควบคุมอุปกรณ์ต่างๆ',
+                monitoringPoints: [
+                    'ตรวจสอบสถานะ LED บนแผงวงจรว่ามีการแจ้งเตือนผิดปกติหรือไม่',
+                    'ตรวจสอบการเชื่อมต่อสายสัญญาณ Input/Output',
+                    'ตรวจสอบความเสถียรของแหล่งจ่ายไฟที่ป้อนให้ PLC',
+                    'สำรองข้อมูลโปรแกรม PLC เป็นประจำ'
+                ]
+            },
+            {
+                id: 'P-009',
+                name: 'Part Code P-009 (แบตเตอรี่ลิเธียมไอออน)',
+                description: 'แบตเตอรี่ลิเธียมไอออนชนิด 18650 ความจุสูง เหมาะสำหรับอุปกรณ์พกพาและระบบสำรองไฟขนาดเล็ก',
+                price: '350',
+                imageUrl: 'https://placehold.co/400x300/33FF99/FFFFFF?text=Part+009',
+                howItWorks: 'เก็บพลังงานไฟฟ้าในรูปของพลังงานเคมีและปล่อยออกมาเมื่อมีการใช้งาน โดยใช้ปฏิกิริยาเคมีของลิเธียมไอออนในการเคลื่อนที่ระหว่างขั้วบวกและขั้วลบ',
+                monitoringPoints: [
+                    'ตรวจสอบแรงดันแบตเตอรี่ว่าอยู่ในช่วงปกติหรือไม่',
+                    'ตรวจสอบอุณหภูมิของแบตเตอรี่ขณะชาร์จและใช้งาน',
+                    'หลีกเลี่ยงการชาร์จเกินหรือคายประจุจนหมด',
+                    'ตรวจสอบสภาพภายนอกของแบตเตอรี่ว่ามีการบวมหรือเสียหายหรือไม่'
+                ]
+            },
+            {
+                id: 'P-010',
+                name: 'Part Code P-010 (ชุดซ่อมบำรุงปั๊มลม)',
+                description: 'ชุดอุปกรณ์สำหรับซ่อมบำรุงปั๊มลมขนาดกลาง ประกอบด้วยซีล โอริง และชิ้นส่วนสึกหรอที่จำเป็น',
+                price: '6,200',
+                imageUrl: 'https://placehold.co/400x300/99FF33/000000?text=Part+010',
+                howItWorks: 'ชุดซ่อมบำรุงนี้ใช้สำหรับเปลี่ยนชิ้นส่วนที่สึกหรอภายในปั๊มลม เพื่อคืนประสิทธิภาพการทำงานและยืดอายุการใช้งานของปั๊ม',
+                monitoringPoints: [
+                    'ตรวจสอบคู่มือการซ่อมบำรุงของปั๊มลมรุ่นนั้นๆ อย่างละเอียด',
+                    'ตรวจสอบความสะอาดของชิ้นส่วนก่อนการประกอบ',
+                    'ใช้เครื่องมือที่ถูกต้องในการถอดและประกอบ',
+                    'ทดสอบการทำงานของปั๊มลมหลังการซ่อมบำรุงว่าแรงดันและอัตราการไหลเป็นปกติ'
+                ]
+            },
+        ];
+
+        // ฟังก์ชันสำหรับแสดงข้อความใน message box
+        function showMessage(msg, type = 'info') {
+            messageBox.textContent = msg;
+            messageBox.className = `message-box ${type}`;
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 5000);
+        }
+
+        // เมื่อหน้าเว็บโหลดเสร็จ
+        window.onload = () => {
+            // ดึงพารามิเตอร์จาก URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const partCode = urlParams.get('partCode');
+            const employeeId = urlParams.get('employeeId');
+
+            if (partCode) {
+                displayPartCodeSpan.textContent = partCode;
+                displayEmployeeIdSpan.textContent = employeeId || 'ไม่ระบุ';
+
+                // ค้นหา Part Code ในข้อมูลจำลอง
+                const foundPart = dummyPartCodes.find(part => part.id === partCode);
+
+                if (foundPart) {
+                    // กำหนด src และ alt ของรูปภาพ
+                    partImage.src = foundPart.imageUrl;
+                    partImage.alt = `รูปภาพของ ${foundPart.name}`;
+
+                    // กำหนดข้อความรายละเอียดทั่วไป
+                    partNameSpan.textContent = foundPart.name;
+                    partDescriptionSpan.textContent = foundPart.description;
+                    partPriceSpan.textContent = foundPart.price;
+
+                    // *** กำหนดข้อมูล "วิธีการทำงาน" ***
+                    howItWorksContent.textContent = foundPart.howItWorks || 'ไม่มีข้อมูลวิธีการทำงาน';
+
+                    // *** กำหนดข้อมูล "จุดเฝ้าระวัง" ***
+                    monitoringPointsList.innerHTML = ''; // ล้างรายการเดิม
+                    if (foundPart.monitoringPoints && foundPart.monitoringPoints.length > 0) {
+                        foundPart.monitoringPoints.forEach(point => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = point;
+                            monitoringPointsList.appendChild(listItem);
+                        });
+                    } else {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = 'ไม่มีข้อมูลจุดเฝ้าระวัง';
+                        monitoringPointsList.appendChild(listItem);
+                    }
+
+                } else {
+                    showMessage(`ไม่พบรายละเอียดสำหรับ Part Code: ${partCode}`, 'error');
+                    partImage.src = 'https://placehold.co/400x300/CCCCCC/666666?text=Image+Not+Found';
+                    partImage.alt = 'ไม่พบรูปภาพ';
+                    partNameSpan.textContent = 'ไม่พบข้อมูล';
+                    partDescriptionSpan.textContent = 'ไม่พบข้อมูล';
+                    partPriceSpan.textContent = 'ไม่พบข้อมูล';
+                    howItWorksContent.textContent = 'ไม่พบข้อมูล';
+                    monitoringPointsList.innerHTML = '<li>ไม่พบข้อมูล</li>';
+                }
+            } else {
+                showMessage("ไม่พบ Part Code ที่ต้องการแสดงรายละเอียด", 'error');
+                displayPartCodeSpan.textContent = 'ไม่ระบุ';
+                displayEmployeeIdSpan.textContent = employeeId || 'ไม่ระบุ';
+                partImage.src = 'https://placehold.co/400x300/CCCCCC/666666?text=No+Part+Code';
+                partImage.alt = 'ไม่พบรูปภาพ';
+                partNameSpan.textContent = 'ไม่พบข้อมูล';
+                partDescriptionSpan.textContent = 'ไม่พบข้อมูล';
+                partPriceSpan.textContent = 'ไม่พบข้อมูล';
+                howItWorksContent.textContent = 'ไม่พบข้อมูล';
+                monitoringPointsList.innerHTML = '<li>ไม่พบข้อมูล</li>';
+            }
+
+            // ตั้งค่าลิงก์กลับให้ส่ง employeeId กลับไปด้วย
+            if (employeeId) {
+                backToSelectionLink.href = `part_selection.html?employeeId=${employeeId}`;
+            } else {
+                backToSelectionLink.href = `login.html`;
+            }
+        };
+    </script>
+</body>
+</html>
